@@ -1,0 +1,12 @@
+server:
+  port: 8080
+  version: v1
+  jwtkey: jwtkey
+  admin:
+    username: admin
+    password: password
+postgresql:
+  user: postgres
+  password: password
+  port: 5432
+  dbname: ums
