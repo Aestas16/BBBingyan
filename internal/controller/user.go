@@ -76,7 +76,7 @@ func UpdateUser(c echo.Context) error {
 }
 
 func DeleteUser(c echo.Context) error {
-    claims := c.Get("claims").(utils.Claims)
+    claims := c.Get("claims").(*utils.Claims)
     id, err := strconv.ParseUint(c.Param("id"), 10, 64)
     if err != nil {
         return echo.ErrNotFound
@@ -166,7 +166,7 @@ func LoginUser(c echo.Context) error {
 }
 
 func RefreshToken(c echo.Context) error {
-    claims := c.Get("claims").(utils.Claims)
+    claims := c.Get("claims").(*utils.Claims)
     expirationTime := time.Now().Add(5 * time.Minute)
     claims.ExpiresAt.Time = expirationTime
     token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
