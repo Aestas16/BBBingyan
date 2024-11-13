@@ -129,6 +129,7 @@ func LoginUser(c echo.Context) error {
     var req struct {
         Username    string  `json:"username"`
         Password    string  `json:"password"`
+        Code        string  `json:"vercode"`
     }
     if err := c.Bind(&req); err != nil {
         return echo.ErrBadRequest
@@ -150,6 +151,19 @@ func LoginUser(c echo.Context) error {
         return echo.NewHTTPError(403, "user not found")
     } else if err != nil {
         return echo.ErrInternalServerError
+    }
+    verCode, err := model.FindVerCodeByUserId(user.ID)
+    if err == model.ErrVerCodeNotFound {
+        return echo.NewHTTPError(403, "verification code not found")
+    } else if err != nil {
+        return echo.ErrInternalServerError
+    }
+    nowTime := time.Now().Unix()
+    if nowTime - verCode.Time > config.Config.Server.Email.Interval {
+        return echo.NewHTTPError(403, "verification code expired")
+    }
+    if req.Code != verCode.Code {
+        return echo.NewHTTPError(403, "wrong verification code")
     }
     if user.Password != req.Password {
         return echo.NewHTTPError(403, "wrong password")
