@@ -9,7 +9,7 @@ type User struct {
     ID          uint64  `gorm:"primaryKey;autoIncrement;index"`
     Username    string  `gorm:"type:varchar(80);unique;not null;" json:"username"`
     Password    string  `json:"password"`
-    Email       string  `json:"email"`
+    Email       string  `gorm:"not null;" json:"email"`
 }
 
 var ErrUserNotFound = errors.New("user not found")

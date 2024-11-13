@@ -5,6 +5,12 @@ server:
   admin:
     username: admin
     password: password
+  email:
+    interval: 60
+    host: smtp.qq.com
+    port: 587
+    username: Aestas16@qq.com
+    password: password
 postgresql:
   user: postgres
   password: password

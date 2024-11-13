@@ -14,8 +14,16 @@ type ServerConfig struct {
     Version string      `yaml:"version"`
     JwtKey  string      `yaml:"jwtkey"`
     Admin   AdminConfig `yaml:"admin"`
+    Email   EmailConfig `yaml:"email"`
 }
 type AdminConfig struct {
+    Username    string  `yaml:"username"`
+    Password    string  `yaml:"password"`
+}
+type EmailConfig struct {
+    Interval    string  `yaml:"interval"`
+    Host        string  `yaml:"host"`
+    Port        string  `yaml:"port"`
     Username    string  `yaml:"username"`
     Password    string  `yaml:"password"`
 }
