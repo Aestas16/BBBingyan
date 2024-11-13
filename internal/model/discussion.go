@@ -3,15 +3,15 @@ package model
 import (
     "errors"
     "gorm.io/gorm"
-	"time"
+    "time"
 )
 
 type Discussion struct {
-    ID		uint64  	`gorm:"primaryKey;autoIncrement;index"`
+    ID		uint64      `gorm:"primaryKey;autoIncrement;index"`
     UserId	string		`gorm:"not null"`
-    Title	string  	`gorm:"not null"`
-	Content	string  	`gorm:"not null"`
-    Time	time.Time
+    Title	string      `gorm:"not null"`
+    Content	string      `gorm:"not null"`
+    Time    time.Time
 }
 
 var ErrDiscussionNotFound = errors.New("discussion not found")
@@ -21,7 +21,7 @@ func CreateDiscussion(discussion *Discussion) error {
 }
 
 func SaveDiscussion(discussion *Discussion) error {
-	return db.save(discussion).Error
+    return db.save(discussion).Error
 }
 
 func FindDiscussionById(id uint64) (*Discussion, error) {
