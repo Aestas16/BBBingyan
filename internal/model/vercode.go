@@ -3,13 +3,12 @@ package model
 import (
     "errors"
     "gorm.io/gorm"
-    "time"
 )
 
 type VerCode struct {
     UserId  uint64  `gorm:"primaryKey;index"`
     Code    string  `gorm:"type:varchar(6);not null;"`
-    Time    time.Time
+    Time    int64
 }
 
 var ErrVerCodeNotFound = errors.New("verification code not found")
@@ -24,7 +23,7 @@ func CreateVerCode(vercode *VerCode) error {
 }
 
 func SaveVerCode(vercode *VerCode) error {
-    return db.save(vercode).Error
+    return db.Save(vercode).Error
 }
 
 func FindVerCodeByUserId(uid uint64) (*VerCode, error) {

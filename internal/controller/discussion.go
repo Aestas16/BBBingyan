@@ -4,9 +4,7 @@ import (
     "time"
     "strconv"
     "github.com/labstack/echo/v4"
-    "github.com/golang-jwt/jwt/v4"
 
-    "user-management-system/internal/config"
     "user-management-system/internal/model"
     "user-management-system/internal/utils"
 )
@@ -25,13 +23,17 @@ func PostDiscussion(c echo.Context) error {
     discussion.Content = req.Content
     discussion.UserId = claims.User.ID
     discussion.Time = time.Now().Unix()
-    if err := model.CreateDiscussion(discussion); err != nil {
+    if err := model.CreateDiscussion(&discussion); err != nil {
         return echo.ErrInternalServerError
     }
+    var resp struct {
+        Message string  `json:"message"`
+    }
+    resp.Message = "Success!"
+    return c.JSON(200, &resp)
 }
 
 func DiscussionInfo(c echo.Context) error {
-    claims := c.Get("claims").(*utils.Claims)
     id, err := strconv.ParseUint(c.Param("id"), 10, 64)
     if err != nil {
         return echo.ErrNotFound
@@ -47,14 +49,14 @@ func DiscussionInfo(c echo.Context) error {
         return echo.ErrInternalServerError
     }
     type Comment struct {
-        UserId      string  `json:"userid"`
+        UserId      uint64  `json:"userid"`
         Content     string  `json:"content"`
-        PostTime    string  `json:"posttime`
+        PostTime    int64   `json:"posttime`
     }
     var resp struct {
         Title       string      `json:"title"`
         Content     string      `json:"content"`
-        PostTime    time.Time   `json:"posttime"`
+        PostTime    int64       `json:"posttime"`
         Comments    []Comment   `json:"comments"`
     }
     resp.Title = discussion.Title
@@ -64,7 +66,7 @@ func DiscussionInfo(c echo.Context) error {
         resp.Comments = append(resp.Comments, Comment{
             UserId: comment.UserId,
             Content: comment.Content,
-            PostTime: comment.PostTime,
+            PostTime: comment.Time,
         })
     }
     return c.JSON(200, &resp)
@@ -72,7 +74,7 @@ func DiscussionInfo(c echo.Context) error {
 
 func PostComment(c echo.Context) error {
     claims := c.Get("claims").(*utils.Claims)
-    id, strconv.ParseUint(c.Param("id"), 10, 64)
+    id, err := strconv.ParseUint(c.Param("id"), 10, 64)
     if err != nil {
         return echo.ErrNotFound
     }
@@ -87,7 +89,7 @@ func PostComment(c echo.Context) error {
     comment.UserId = claims.User.ID
     comment.Content = req.Content
     comment.Time = time.Now().Unix()
-    if err := model.CreateComment(comment); err != nil {
+    if err := model.CreateComment(&comment); err != nil {
         return echo.ErrInternalServerError
     }
     var resp struct {

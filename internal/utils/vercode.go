@@ -1,4 +1,7 @@
+package utils
+
 import (
+    "fmt"
     "math/rand"
     "time"
     "gopkg.in/gomail.v2"
@@ -6,10 +9,10 @@ import (
     "user-management-system/internal/config"
 )
 
-func GenerateVerCode(len int) string {
+func GenerateVerCode(length int) string {
     rand.Seed(time.Now().UnixNano())
     var chars = []rune("0123456789")
-    b := make([]rune, len)
+    b := make([]rune, length)
     for i := range(b) {
         b[i] = chars[rand.Intn(len(chars))]
     }

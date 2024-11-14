@@ -27,12 +27,12 @@ func SendVerCode(c echo.Context) error {
         verCode := model.VerCode{}
         verCode.UserId = user.ID
         verCode.Code = utils.GenerateVerCode(6)
-        verCode.time = time.Now().Unix()
+        verCode.Time = time.Now().Unix()
         err = model.CreateVerCode(&verCode)
         if err != nil {
             return echo.ErrInternalServerError
         }
-        if err := utils.SendVerCode(verCode.Code, user.Email), err != nil {
+        if err := utils.SendVerCode(verCode.Code, user.Email); err != nil {
             return echo.ErrInternalServerError
         }
         var resp struct {
@@ -43,17 +43,17 @@ func SendVerCode(c echo.Context) error {
     } else if err != nil {
         return echo.ErrInternalServerError
     }
-    nowTime = time.Now().Unix()
+    nowTime := time.Now().Unix()
     if nowTime - lastVerCode.Time < config.Config.Server.Email.Interval {
         return echo.NewHTTPError(403, "access denied")
     }
     lastVerCode.Code = utils.GenerateVerCode(6)
-    lastVerCode.time = nowTime()
+    lastVerCode.Time = nowTime
     err = model.SaveVerCode(lastVerCode)
     if err != nil {
         return echo.ErrInternalServerError
     }
-    if err := utils.SendVerCode(lastVerCode.Code, user.Email), err != nil {
+    if err := utils.SendVerCode(lastVerCode.Code, user.Email); err != nil {
         return echo.ErrInternalServerError
     }
     var resp struct {

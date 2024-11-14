@@ -24,4 +24,10 @@ func InitDB() {
     if err := db.AutoMigrate(&VerCode{}); err != nil {
         panic(err)
     }
+    if err := db.AutoMigrate(&Discussion{}); err != nil {
+        panic(err)
+    }
+    if err := db.AutoMigrate(&Comment{}); err != nil {
+        panic(err)
+    }
 }
