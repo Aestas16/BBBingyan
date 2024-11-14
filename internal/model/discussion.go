@@ -7,10 +7,10 @@ import (
 )
 
 type Discussion struct {
-    ID		uint64      `gorm:"primaryKey;autoIncrement;index"`
-    UserId	string		`gorm:"not null"`
-    Title	string      `gorm:"not null"`
-    Content	string      `gorm:"not null"`
+    ID      uint64      `gorm:"primaryKey;autoIncrement;index"`
+    UserId  string      `gorm:"not null"`
+    Title   string      `gorm:"not null"`
+    Content string      `gorm:"not null"`
     Time    time.Time
 }
 
