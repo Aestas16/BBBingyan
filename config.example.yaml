@@ -11,8 +11,4 @@ server:
     port: 587
     username: Aestas16@qq.com
     password: password
-postgresql:
-  user: postgres
-  password: password
-  port: 5432
-  dbname: ums
+  dsn:

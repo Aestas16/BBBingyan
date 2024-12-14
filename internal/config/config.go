@@ -7,7 +7,6 @@ import (
 
 type Configuration struct {
     Server  ServerConfig    `yaml:"server"`
-    SQL     SQLConfig       `yaml:"postgresql"`
 }
 type ServerConfig struct {
     Port    int         `yaml:"port"`
@@ -15,6 +14,7 @@ type ServerConfig struct {
     JwtKey  string      `yaml:"jwtkey"`
     Admin   AdminConfig `yaml:"admin"`
     Email   EmailConfig `yaml:"email"`
+    Dsn     string      `yaml:"dsn"`
 }
 type AdminConfig struct {
     Username    string  `yaml:"username"`
@@ -26,12 +26,6 @@ type EmailConfig struct {
     Port        int     `yaml:"port"`
     Username    string  `yaml:"username"`
     Password    string  `yaml:"password"`
-}
-type SQLConfig struct {
-    User        string  `yaml:"user"`
-    Password    string  `yaml:"password"`
-    Port        int     `yaml:"port"`
-    DBName      string  `yaml:"dbname"`
 }
 
 var Config Configuration
