@@ -2,6 +2,7 @@ package controller
 
 import (
     "time"
+    "net/http"
     "github.com/labstack/echo/v4"
 
     "user-management-system/internal/config"
@@ -39,7 +40,7 @@ func SendVerCode(c echo.Context) error {
             Message string  `json:"message"`
         }
         resp.Message = "Success!"
-        return c.JSON(200, &resp)
+        return c.JSON(http.StatusOK, &resp)
     } else if err != nil {
         return echo.ErrInternalServerError
     }
@@ -60,5 +61,5 @@ func SendVerCode(c echo.Context) error {
         Message string  `json:"message"`
     }
     resp.Message = "Success!"
-    return c.JSON(200, &resp) 
+    return c.JSON(http.StatusOK, &resp) 
 }

@@ -5,6 +5,7 @@ import (
     "time"
     "strconv"
     "crypto/md5"
+    "net/http"
     "github.com/labstack/echo/v4"
     "github.com/golang-jwt/jwt/v4"
 
@@ -40,7 +41,7 @@ func UserInfo(c echo.Context) error {
     }
     resp.Username = user.Username
     resp.Email = user.Email
-    return c.JSON(200, &resp)
+    return c.JSON(http.StatusOK, &resp)
 }
 
 func UpdateUser(c echo.Context) error {
@@ -72,7 +73,7 @@ func UpdateUser(c echo.Context) error {
         Message string  `json:"message"`
     }
     resp.Message = "Success!"
-    return c.JSON(200, &resp)
+    return c.JSON(http.StatusOK, &resp)
 }
 
 func DeleteUser(c echo.Context) error {
@@ -97,7 +98,7 @@ func DeleteUser(c echo.Context) error {
         Message string  `json:"message"`
     }
     resp.Message = "Success!"
-    return c.JSON(200, &resp)
+    return c.JSON(http.StatusOK, &resp)
 }
 
 func RegisterUser(c echo.Context) error {
@@ -122,7 +123,7 @@ func RegisterUser(c echo.Context) error {
         Message string  `json:"message"`
     }
     resp.Message = "Success!"
-    return c.JSON(201, &resp)
+    return c.JSON(http.StatusCreated, &resp)
 }
 
 func LoginUser(c echo.Context) error {
@@ -143,7 +144,7 @@ func LoginUser(c echo.Context) error {
             TokenString string  `json:"token"`
         }
         resp.TokenString = tokenString
-        return c.JSON(200, &resp)
+        return c.JSON(http.StatusOK, &resp)
     }
     req.Password = fmt.Sprintf("%x", md5.Sum([]byte(req.Password)))
     user, err := model.FindUserByName(req.Username)
@@ -176,7 +177,7 @@ func LoginUser(c echo.Context) error {
         TokenString string  `json:"token"`
     }
     resp.TokenString = tokenString
-    return c.JSON(200, &resp)
+    return c.JSON(http.StatusOK, &resp)
 }
 
 func RefreshToken(c echo.Context) error {
@@ -192,5 +193,5 @@ func RefreshToken(c echo.Context) error {
         TokenString string  `json:"token"`
     }
     resp.TokenString = tokenString
-    return c.JSON(200, &resp)
+    return c.JSON(http.StatusOK, &resp)
 }

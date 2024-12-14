@@ -3,6 +3,7 @@ package controller
 import (
     "time"
     "strconv"
+    "net/http"
     "github.com/labstack/echo/v4"
 
     "user-management-system/internal/model"
@@ -30,7 +31,7 @@ func PostDiscussion(c echo.Context) error {
         Message string  `json:"message"`
     }
     resp.Message = "Success!"
-    return c.JSON(200, &resp)
+    return c.JSON(http.StatusOK, &resp)
 }
 
 func DiscussionInfo(c echo.Context) error {
@@ -69,7 +70,7 @@ func DiscussionInfo(c echo.Context) error {
             PostTime: comment.Time,
         })
     }
-    return c.JSON(200, &resp)
+    return c.JSON(http.StatusOK, &resp)
 }
 
 func PostComment(c echo.Context) error {
@@ -96,5 +97,5 @@ func PostComment(c echo.Context) error {
         Message string  `json:"message"`
     }
     resp.Message = "Success!"
-    return c.JSON(200, &resp)
+    return c.JSON(http.StatusOK, &resp)
 }
