@@ -13,6 +13,7 @@ import (
     "user-management-system/internal/model"
     "user-management-system/internal/utils"
     "user-management-system/internal/controller/param"
+    "user-management-system/internal/controller/context"
 )
 
 type User struct {
@@ -60,8 +61,8 @@ func UpdateUser(c echo.Context) error {
     } else if err != nil {
         return echo.ErrInternalServerError
     }
-    req := User{}
-    if err := c.Bind(&req); err != nil {
+    req := new(param.UserRequest)
+    if err := context.BindAndVali(c, req); err != nil {
         return echo.ErrBadRequest
     }
     user.Username = req.Username
@@ -103,8 +104,8 @@ func DeleteUser(c echo.Context) error {
 }
 
 func RegisterUser(c echo.Context) error {
-    req := User{}
-    if err := c.Bind(&req); err != nil {
+    req := new(param.UserRequest)
+    if err := context.BindAndVali(c, req); err != nil {
         return echo.ErrBadRequest
     }
     if req.Username == "" || req.Password == "" {
@@ -129,7 +130,7 @@ func RegisterUser(c echo.Context) error {
 
 func LoginUser(c echo.Context) error {
     req := new(param.LoginUserRequest)
-    if err := c.Bind(&req); err != nil {
+    if err := context.BindAndVali(c, req); err != nil {
         return echo.ErrBadRequest
     }
     if req.Username == config.Config.Server.Admin.Username && req.Password == config.Config.Server.Admin.Password {

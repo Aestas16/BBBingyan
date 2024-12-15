@@ -9,12 +9,13 @@ import (
     "user-management-system/internal/model"
     "user-management-system/internal/utils"
     "user-management-system/internal/controller/param"
+    "user-management-system/internal/controller/context"
 )
 
 func PostDiscussion(c echo.Context) error {
     claims := c.Get("claims").(*utils.Claims)
     req := new(param.PostDiscussionRequest)
-    if err := c.Bind(&req); err != nil {
+    if err := context.BindAndVali(c, req); err != nil {
         return echo.ErrBadRequest
     }
     discussion := model.Discussion{}
@@ -78,7 +79,7 @@ func PostComment(c echo.Context) error {
         return echo.ErrNotFound
     }
     req := new(param.PostCommentRequest)
-    if err := c.Bind(&req); err != nil {
+    if err := context.BindAndVali(c, req); err != nil {
         return echo.ErrBadRequest
     }
     comment := model.Comment{}

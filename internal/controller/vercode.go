@@ -9,11 +9,12 @@ import (
     "user-management-system/internal/model"
     "user-management-system/internal/utils"
     "user-management-system/internal/controller/param"
+    "user-management-system/internal/controller/context"
 )
 
 func SendVerCode(c echo.Context) error {
     req := new(param.SendVerCodeRequest)
-    if err := c.Bind(&req); err != nil {
+    if err := context.BindAndVali(c, req); err != nil {
         return echo.ErrBadRequest
     }
     user, err := model.FindUserByName(req.Username)
