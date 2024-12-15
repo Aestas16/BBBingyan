@@ -15,7 +15,7 @@ var ErrInvalidToken = errors.New("invalid token")
 var ErrTokenExpired = errors.New("token expired")
 
 type Claims struct {
-    User *model.User
+    UserId  uint64
     IsAdmin bool
     jwt.RegisteredClaims
 }
@@ -23,7 +23,7 @@ type Claims struct {
 func GenerateToken(user *model.User, isAdmin bool) (string, error) {
     expirationTime := time.Now().Add(5 * time.Minute)
     claims := &Claims{
-        User: user,
+        UserID: user.ID,
         IsAdmin: isAdmin,
         RegisteredClaims: jwt.RegisteredClaims{
             ExpiresAt: jwt.NewNumericDate(expirationTime),

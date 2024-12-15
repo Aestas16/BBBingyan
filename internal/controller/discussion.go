@@ -22,7 +22,7 @@ func PostDiscussion(c echo.Context) error {
     discussion := model.Discussion{}
     discussion.Title = req.Title
     discussion.Content = req.Content
-    discussion.UserId = claims.User.ID
+    discussion.UserId = claims.UserId
     discussion.Time = time.Now().Unix()
     if err := model.CreateDiscussion(&discussion); err != nil {
         return echo.ErrInternalServerError
@@ -87,7 +87,7 @@ func PostComment(c echo.Context) error {
     }
     comment := model.Comment{}
     comment.DiscId = id
-    comment.UserId = claims.User.ID
+    comment.UserId = claims.UserId
     comment.Content = req.Content
     comment.Time = time.Now().Unix()
     if err := model.CreateComment(&comment); err != nil {

@@ -26,7 +26,7 @@ func UserInfo(c echo.Context) error {
     if err != nil {
         return echo.ErrNotFound
     }
-    if !claims.IsAdmin && claims.User.ID != id {
+    if !claims.IsAdmin && claims.UserId != id {
         return echo.NewHTTPError(403, "access denied")
     }
     user, err := model.FindUserById(id)
@@ -50,7 +50,7 @@ func UpdateUser(c echo.Context) error {
     if err != nil {
         return echo.ErrNotFound
     }
-    if !claims.IsAdmin && claims.User.ID != id {
+    if !claims.IsAdmin && claims.UserId != id {
         return echo.NewHTTPError(403, "access denied")
     }
     user, err := model.FindUserById(id)
