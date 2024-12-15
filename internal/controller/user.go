@@ -12,6 +12,7 @@ import (
     "user-management-system/internal/config"
     "user-management-system/internal/model"
     "user-management-system/internal/utils"
+    "user-management-system/internal/controller/param"
 )
 
 type User struct {
@@ -27,7 +28,7 @@ func UserInfo(c echo.Context) error {
         return echo.ErrNotFound
     }
     if !claims.IsAdmin && claims.UserId != id {
-        return echo.NewHTTPError(403, "access denied")
+        return echo.NewHTTPError(http.StatusForbidden, "access denied")
     }
     user, err := model.FindUserById(id)
     if err == model.ErrUserNotFound {
@@ -51,7 +52,7 @@ func UpdateUser(c echo.Context) error {
         return echo.ErrNotFound
     }
     if !claims.IsAdmin && claims.UserId != id {
-        return echo.NewHTTPError(403, "access denied")
+        return echo.NewHTTPError(http.StatusForbidden, "access denied")
     }
     user, err := model.FindUserById(id)
     if err == model.ErrUserNotFound {
@@ -83,7 +84,7 @@ func DeleteUser(c echo.Context) error {
         return echo.ErrNotFound
     }
     if !claims.IsAdmin {
-        return echo.NewHTTPError(403, "access denied")
+        return echo.NewHTTPError(http.StatusForbidden, "access denied")
     }
     _, err = model.FindUserById(id)
     if err == model.ErrUserNotFound {
@@ -115,7 +116,7 @@ func RegisterUser(c echo.Context) error {
     user.Email = req.Email
     err := model.CreateUser(&user)
     if err == model.ErrUserAlreadyExist {
-        return echo.NewHTTPError(403, "access denied")
+        return echo.NewHTTPError(http.StatusForbidden, "access denied")
     } else if err != nil {
         return echo.ErrInternalServerError
     }
@@ -127,11 +128,7 @@ func RegisterUser(c echo.Context) error {
 }
 
 func LoginUser(c echo.Context) error {
-    var req struct {
-        Username    string  `json:"username"`
-        Password    string  `json:"password"`
-        Code        string  `json:"vercode"`
-    }
+    req := new(param.LoginUserRequest)
     if err := c.Bind(&req); err != nil {
         return echo.ErrBadRequest
     }
@@ -149,25 +146,25 @@ func LoginUser(c echo.Context) error {
     req.Password = fmt.Sprintf("%x", md5.Sum([]byte(req.Password)))
     user, err := model.FindUserByName(req.Username)
     if err == model.ErrUserNotFound {
-        return echo.NewHTTPError(403, "user not found")
+        return echo.NewHTTPError(http.StatusForbidden, "user not found")
     } else if err != nil {
         return echo.ErrInternalServerError
     }
     verCode, err := model.FindVerCodeByUserId(user.ID)
     if err == model.ErrVerCodeNotFound {
-        return echo.NewHTTPError(403, "verification code not found")
+        return echo.NewHTTPError(http.StatusForbidden, "verification code not found")
     } else if err != nil {
         return echo.ErrInternalServerError
     }
     nowTime := time.Now().Unix()
     if nowTime - verCode.Time > config.Config.Server.Email.Interval {
-        return echo.NewHTTPError(403, "verification code expired")
+        return echo.NewHTTPError(http.StatusForbidden, "verification code expired")
     }
     if req.Code != verCode.Code {
-        return echo.NewHTTPError(403, "wrong verification code")
+        return echo.NewHTTPError(http.StatusForbidden, "wrong verification code")
     }
     if user.Password != req.Password {
-        return echo.NewHTTPError(403, "wrong password")
+        return echo.NewHTTPError(http.StatusForbidden, "wrong password")
     }
     tokenString, err := utils.GenerateToken(user, false)
     if err != nil {

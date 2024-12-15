@@ -8,18 +8,17 @@ import (
     "user-management-system/internal/config"
     "user-management-system/internal/model"
     "user-management-system/internal/utils"
+    "user-management-system/internal/controller/param"
 )
 
 func SendVerCode(c echo.Context) error {
-    var req struct {
-        Username    string    `json:"username"`
-    }
+    req := new(param.SendVerCodeRequest)
     if err := c.Bind(&req); err != nil {
         return echo.ErrBadRequest
     }
     user, err := model.FindUserByName(req.Username)
     if err == model.ErrUserNotFound {
-        return echo.NewHTTPError(403, "user not found")
+        return echo.NewHTTPError(http.StatusForbidden, "user not found")
     } else if err != nil {
         return echo.ErrInternalServerError
     }
@@ -46,7 +45,7 @@ func SendVerCode(c echo.Context) error {
     }
     nowTime := time.Now().Unix()
     if nowTime - lastVerCode.Time < config.Config.Server.Email.Interval {
-        return echo.NewHTTPError(403, "access denied")
+        return echo.NewHTTPError(http.StatusForbidden, "access denied")
     }
     lastVerCode.Code = utils.GenerateVerCode(6)
     lastVerCode.Time = nowTime

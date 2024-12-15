@@ -8,14 +8,12 @@ import (
 
     "user-management-system/internal/model"
     "user-management-system/internal/utils"
+    "user-management-system/internal/controller/param"
 )
 
 func PostDiscussion(c echo.Context) error {
     claims := c.Get("claims").(*utils.Claims)
-    var req struct {
-        Title   string    `json:"title"`
-        Content string    `json:"content"`
-    }
+    req := new(param.PostDiscussionRequest)
     if err := c.Bind(&req); err != nil {
         return echo.ErrBadRequest
     }
@@ -79,9 +77,7 @@ func PostComment(c echo.Context) error {
     if err != nil {
         return echo.ErrNotFound
     }
-    var req struct {
-        Content    string    `json:"content"`
-    }
+    req := new(param.PostCommentRequest)
     if err := c.Bind(&req); err != nil {
         return echo.ErrBadRequest
     }
