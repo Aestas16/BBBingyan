@@ -7,19 +7,20 @@ import (
     "user-management-system/internal/config"
     "user-management-system/internal/controller"
     "user-management-system/internal/utils"
+    "user-management-system/internal/middleware"
 )
 
 func InitRouter(e *echo.Echo) {
     apiVersion := config.Config.Server.Version
     apiUser := e.Group(fmt.Sprintf("/%s/user", apiVersion))
-    apiUser.Use(utils.JWTAuthMiddleware())
+    apiUser.Use(middleware.JWTAuthMiddleware())
     apiUser.GET("/:id", controller.UserInfo)
     apiUser.POST("/:id", controller.UserInfo)
     apiUser.POST("/:id/update", controller.UpdateUser)
     apiUser.POST("/:id/delete", controller.DeleteUser)
     apiUser.POST("/token", controller.RefreshToken)
     apiForum := e.Group(fmt.Sprintf("/%s/discussion", apiVersion))
-    apiForum.Use(utils.JWTAuthMiddleware())
+    apiForum.Use(middleware.JWTAuthMiddleware())
     apiForum.GET("/:id", controller.DiscussionInfo)
     apiForum.POST("/:id", controller.DiscussionInfo)
     apiForum.POST("/post", controller.PostDiscussion)

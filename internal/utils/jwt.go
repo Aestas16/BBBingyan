@@ -47,24 +47,3 @@ func ParseToken(tokenString string) (*Claims, error) {
     }
     return claims, err
 }
-
-func JWTAuthMiddleware() echo.MiddlewareFunc {
-    return func(next echo.HandlerFunc) echo.HandlerFunc {
-        return func(c echo.Context) error {
-            tokenString := c.Request().Header.Get("Authorization")
-            if tokenString == "" {
-                return echo.NewHTTPError(401, "token not found")
-            }
-            claims, err := ParseToken(tokenString)
-            if err == ErrInvalidToken {
-                return echo.NewHTTPError(401, "invalid token")
-            } else if err == ErrTokenExpired {
-                return echo.NewHTTPError(401, "token expired")
-            } else if err != nil {
-                return echo.ErrInternalServerError
-            }
-            c.Set("claims", claims)
-            return next(c);
-        }
-    }
-}
