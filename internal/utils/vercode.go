@@ -5,9 +5,24 @@ import (
     "math/rand"
     "time"
     "gopkg.in/gomail.v2"
+    "github.com/redis/go-redis/v9"
 
     "user-management-system/internal/config"
 )
+
+var RedisClient *redis.Client
+
+func InitRedis() {
+	RedisClient = redis.NewClient(&redis.Options{
+		Addr:     config.Config.Redis.Host,
+		Password: config.Config.Redis.Password,
+		DB:       config.Config.Redis.DB,
+	})
+	_, err := RedisClient.Ping(context.Background()).Result()
+	if err != nil {
+		panic(err)
+	}
+}
 
 func GenerateVerCode(length int) string {
     rand.Seed(time.Now().UnixNano())
