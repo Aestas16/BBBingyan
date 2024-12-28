@@ -27,11 +27,11 @@ type AdminConfig struct {
     Password    string  `yaml:"password"`
 }
 type EmailConfig struct {
-    Interval    int64   `yaml:"interval"`
     Host        string  `yaml:"host"`
     Port        int     `yaml:"port"`
     Username    string  `yaml:"username"`
     Password    string  `yaml:"password"`
+    Expire      int     `yaml:"expire"`
 }
 
 var Config Configuration

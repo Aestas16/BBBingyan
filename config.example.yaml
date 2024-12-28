@@ -11,6 +11,7 @@ server:
     port: 587
     username: Aestas16@qq.com
     password: password
+    expire: 300
   dsn:
 redis:
   host: 

@@ -1,9 +1,9 @@
 package controller
 
 import (
-    "time"
     "net/http"
     "github.com/labstack/echo/v4"
+    "github.com/redis/go-redis/v9"
 
     "user-management-system/internal/config"
     "user-management-system/internal/model"
@@ -23,38 +23,13 @@ func SendVerCode(c echo.Context) error {
     } else if err != nil {
         return echo.ErrInternalServerError
     }
-    lastVerCode, err := model.FindVerCodeByUserId(user.ID)
-    if err == model.ErrVerCodeNotFound {
-        verCode := model.VerCode{}
-        verCode.UserId = user.ID
-        verCode.Code = utils.GenerateVerCode(6)
-        verCode.Time = time.Now().Unix()
-        err = model.CreateVerCode(&verCode)
-        if err != nil {
-            return echo.ErrInternalServerError
-        }
-        if err := utils.SendVerCode(verCode.Code, user.Email); err != nil {
-            return echo.ErrInternalServerError
-        }
-        var resp struct {
-            Message string  `json:"message"`
-        }
-        resp.Message = "Success!"
-        return c.JSON(http.StatusOK, &resp)
-    } else if err != nil {
-        return echo.ErrInternalServerError
-    }
-    nowTime := time.Now().Unix()
-    if nowTime - lastVerCode.Time < config.Config.Server.Email.Interval {
-        return echo.NewHTTPError(http.StatusForbidden, "access denied")
-    }
-    lastVerCode.Code = utils.GenerateVerCode(6)
-    lastVerCode.Time = nowTime
-    err = model.SaveVerCode(lastVerCode)
+    exists, err := utils.CheckVerCodeExist(user.Email)
     if err != nil {
         return echo.ErrInternalServerError
+    } else if exists == true {
+        return echo.NewHTTPError(http.StatusForbidden, "verification code already exist")
     }
-    if err := utils.SendVerCode(lastVerCode.Code, user.Email); err != nil {
+    if err := utils.SendVerCode(user.Email); err != nil {
         return echo.ErrInternalServerError
     }
     var resp struct {

@@ -30,13 +30,23 @@ func CreateVerCode(email string, code string) error {
     if err != nil {
         return err
     }
-    err = RedisClient.Expire(ctx, email, time.Duration(config.Config.Captcha.Expire)*time.Second).Err()
+    err = RedisClient.Expire(ctx, email, time.Duration(config.Config.Server.Email.Expire) * time.Second).Err()
     return err
 }
 
-func ValidateVerCode(email string, code string) (bool, error) {
+func GetVerCode(email string) (string, error) {
     ctx := context.Background()
     vercode, err := RedisClient.Get(ctx, email).Result()
+    return vercode, err
+}
+
+func CheckVerCodeExist(email string) (bool, error) {
+    ctx := context.Background()
+    return RedisClient.Exists(ctx, email).Result()
+}
+
+func ValidateVerCode(email string, code string) (bool, error) {
+    vercode, err := GetVerCode(string)
     if err != nil {
         return false, err
     }
@@ -56,14 +66,19 @@ func GenerateVerCode(length int) string {
     return string(b)
 }
 
-func SendVerCode(code string, email string) error {
+func SendVerCode(email string) error {
     cfg := config.Config.Server.Email
     m := gomail.NewMessage()
+    code := GenerateVerCode(8)
     m.SetHeader("From", cfg.Username)
     m.SetHeader("To", email)
     m.SetHeader("Subject", "Verification Code")
     msg := fmt.Sprintf("Your verification code is %s", code)
     m.SetBody("text/html", msg)
     d := gomail.NewDialer(cfg.Host, cfg.Port, cfg.Username, cfg.Password)
-    return d.DialAndSend(m)
+    err := d.DialAndSend(m)
+    if err != nil {
+        return err
+    }
+    return CreateVerCode(email, code)
 }

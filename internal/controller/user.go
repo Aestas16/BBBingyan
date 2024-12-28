@@ -2,7 +2,6 @@ package controller
 
 import (
     "fmt"
-    "time"
     "strconv"
     "crypto/md5"
     "net/http"
@@ -151,17 +150,16 @@ func LoginUser(c echo.Context) error {
     } else if err != nil {
         return echo.ErrInternalServerError
     }
-    verCode, err := model.FindVerCodeByUserId(user.ID)
-    if err == model.ErrVerCodeNotFound {
-        return echo.NewHTTPError(http.StatusForbidden, "verification code not found")
-    } else if err != nil {
+    exists, err := utils.CheckVerCodeExist(user.Email)
+    if err != nil {
         return echo.ErrInternalServerError
+    } else if exists == false {
+        return echo.NewHTTPError(http.StatusForbidden, "verification code not found") 
     }
-    nowTime := time.Now().Unix()
-    if nowTime - verCode.Time > config.Config.Server.Email.Interval {
-        return echo.NewHTTPError(http.StatusForbidden, "verification code expired")
-    }
-    if req.Code != verCode.Code {
+    validateResult, err := utils.ValidateVerCode(user.Email, req.Code)
+    if err != nil {
+        return echo.ErrInternalServerError
+    } else if validateResult == false {
         return echo.NewHTTPError(http.StatusForbidden, "wrong verification code")
     }
     if user.Password != req.Password {
