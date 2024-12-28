@@ -7,6 +7,7 @@ import (
 
 type Configuration struct {
     Server  ServerConfig    `yaml:"server"`
+    Redis   RedisConfig     `yaml:"redis"`
 }
 type ServerConfig struct {
     Port    int         `yaml:"port"`
@@ -15,6 +16,11 @@ type ServerConfig struct {
     Admin   AdminConfig `yaml:"admin"`
     Email   EmailConfig `yaml:"email"`
     Dsn     string      `yaml:"dsn"`
+}
+type RedisConfig struct {
+    Host     string `yaml:"host"`
+    Password string `yaml:"password"`
+    DB       int    `yaml:"db"`
 }
 type AdminConfig struct {
     Username    string  `yaml:"username"`

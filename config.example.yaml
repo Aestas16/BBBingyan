@@ -12,3 +12,7 @@ server:
     username: Aestas16@qq.com
     password: password
   dsn:
+redis:
+  host: 
+  password: 
+  db: 0

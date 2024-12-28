@@ -8,6 +8,7 @@ import (
     "user-management-system/internal/config"
     "user-management-system/internal/model"
     "user-management-system/internal/router"
+    "user-management-system/internal/utils"
 )
 
 func main() {
@@ -17,5 +18,6 @@ func main() {
     config.InitConfig()
     model.InitDB()
     router.InitRouter(e)
+    utils.InitRedis()
     e.Logger.Fatal(e.Start(":" + strconv.Itoa(config.Config.Server.Port)))
 }
